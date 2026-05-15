@@ -385,6 +385,9 @@ namespace MiniMuhasebe.Data
                 if (count > 0) return; // Veriler zaten var
             }
 
+            // Admin kullanıcısı için gerçek hash oluştur
+            var (adminHash, adminSalt) = PasswordHelper.HashPassword("Admin123!");
+
             var seedCommands = new List<string>
             {
                 // Rolleri Ekle
@@ -392,11 +395,8 @@ namespace MiniMuhasebe.Data
                 "INSERT INTO Roles (RoleName, Description) VALUES ('User', 'Standart Kullanıcı - Okuma ve temel yazma izni');",
 
                 // Admin Kullanıcısı (username: admin, password: Admin123!)
-                // Hash ve Salt ayrıca güvenli şekilde oluşturulacak
-                @"INSERT INTO Users (Username, Email, PasswordHash, PasswordSalt, RoleId, IsActive) 
-                  VALUES ('admin', 'admin@minimuhasebe.local', 
-                          '2A9E9C7F9D8B1E5C5F5E5D5C5B5A59585756555453525150',
-                          '1A2B3C4D5E6F7A8B9C0D1E2F3A4B5C6D', 1, 1);",
+                $@"INSERT INTO Users (Username, Email, PasswordHash, PasswordSalt, RoleId, IsActive) 
+                  VALUES ('admin', 'admin@minimuhasebe.local', '{adminHash}', '{adminSalt}', 1, 1);",
 
                 // Başlangıç Ayarları
                 @"INSERT INTO AppSettings (SettingKey, SettingValue, SettingType, Description) VALUES

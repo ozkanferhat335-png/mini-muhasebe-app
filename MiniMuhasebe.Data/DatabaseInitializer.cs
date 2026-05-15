@@ -391,12 +391,9 @@ namespace MiniMuhasebe.Data
                 "INSERT INTO Roles (RoleName, Description) VALUES ('Admin', 'Yönetici - Tüm izinlere sahip');",
                 "INSERT INTO Roles (RoleName, Description) VALUES ('User', 'Standart Kullanıcı - Okuma ve temel yazma izni');",
 
-                // Admin Kullanıcısı (username: admin, password: Admin123!)
-                // Hash ve Salt ayrıca güvenli şekilde oluşturulacak
-                @"INSERT INTO Users (Username, Email, PasswordHash, PasswordSalt, RoleId, IsActive) 
-                  VALUES ('admin', 'admin@minimuhasebe.local', 
-                          '2A9E9C7F9D8B1E5C5F5E5D5C5B5A59585756555453525150',
-                          '1A2B3C4D5E6F7A8B9C0D1E2F3A4B5C6D', 1, 1);",
+                // Admin Kullanıcısı - hash runtime'da oluşturulacak (aşağıda)
+                // Placeholder - gerçek hash SeedAdminUser ile eklenir
+                "SELECT 1;", // no-op placeholder
 
                 // Başlangıç Ayarları
                 @"INSERT INTO AppSettings (SettingKey, SettingValue, SettingType, Description) VALUES
@@ -425,8 +422,44 @@ namespace MiniMuhasebe.Data
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Seed data yüklenirken uyarı: {ex.Message}");
-                    // Devam et, kritik hata değilse
                 }
+            }
+
+            // Admin kullanıcısını güvenli hash ile oluştur
+            SeedAdminUser(connection);
+        }
+
+        /// <summary>
+        /// Admin kullanıcısını PBKDF2 hash ile oluşturur
+        /// </summary>
+        private void SeedAdminUser(SQLiteConnection connection)
+        {
+            try
+            {
+                // Kullanıcı zaten var mı kontrol et
+                using (var checkCmd = new SQLiteCommand("SELECT COUNT(*) FROM Users WHERE Username = 'admin';", connection))
+                {
+                    if (Convert.ToInt32(checkCmd.ExecuteScalar()) > 0) return;
+                }
+
+                // Güvenli hash oluştur
+                var (hash, salt) = PasswordHelper.HashPassword("Admin123!");
+
+                string insertQuery = @"INSERT INTO Users (Username, Email, PasswordHash, PasswordSalt, RoleId, IsActive) 
+                                      VALUES ('admin', 'admin@minimuhasebe.local', @Hash, @Salt, 1, 1);";
+
+                using (var cmd = new SQLiteCommand(insertQuery, connection))
+                {
+                    cmd.Parameters.AddWithValue("@Hash", hash);
+                    cmd.Parameters.AddWithValue("@Salt", salt);
+                    cmd.ExecuteNonQuery();
+                }
+
+                Console.WriteLine("✓ Admin kullanıcısı oluşturuldu. (admin / Admin123!)");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Admin kullanıcısı oluşturulurken hata: {ex.Message}");
             }
         }
 

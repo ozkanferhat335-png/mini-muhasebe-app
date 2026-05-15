@@ -1,6 +1,6 @@
 # Mini Muhasebe Uygulaması
 
-**Açıklama:** Küçük esnaf ve KOBİ'ler için geliştirilmiş, masaüstü tabanlı mini muhasebe uygulaması.
+Küçük işletmeler için geliştirilmiş kapsamlı muhasebe yönetim sistemi.
 
 ## Teknolojiler
 
@@ -8,177 +8,174 @@
 - **UI Framework:** Windows Forms (WinForms)
 - **Veritabanı:** SQLite
 - **Mimari:** Katmanlı Mimari (UI, Business Logic, Data Access, Integration)
-- **API Entegrasyonu:** Banka API (Ödeme Sistemleri)
-
-## Özellikler
-
-✅ **Kullanıcı ve Yetki Yönetimi**
-- Giriş ekranı (kullanıcı adı/şifre)
-- İki rol sistemi (Yönetici, Standart Kullanıcı)
-- Şifre hash + salt ile güvenli saklama
-- Audit log (oturum açma/kapama)
-
-✅ **Firma ve Dönem Yönetimi**
-- Birden fazla firma kaydı
-- Mali dönem tanımlaması
-- Aktif firma/dönem seçimi
-
-✅ **Gelir-Gider Takibi**
-- Manuel fiş/kayıt girişi (CRUD)
-- Tarih, belge no, açıklama, tutar, KDV
-- Ödeme tipi seçimi (nakit/banka/cari)
-
-✅ **Cari Hesap Yönetimi**
-- Müşteri ve tedarikçi kartı
-- Cari hareket takibi (borç/alacak)
-- Bakiye ve ekstre görüntüleme
-
-✅ **Banka Hesapları**
-- Birden fazla banka hesabı
-- API entegrasyonu
-- Otomatik hareket çekme
-- Mükerrer kayıt engelleme
-
-✅ **Eşleştirme Sistemi**
-- Banka hareketlerini muhasebe kayıtlarıyla eşleştirme
-- Otomatik eşleme kuralları
-- Manuel eşleştirme
-- Bekleyen işlemler takibi
-
-✅ **Raporlama**
-- Aylık/haftalık gelir-gider özeti
-- Nakit akış raporu
-- Cari ekstre raporu
-- Banka hareket raporu
-- Excel/CSV dışa aktarım
-
-✅ **Yedekleme**
-- Tek tık yedek alma
-- Otomatik yedekleme
-- Geri yükleme fonksiyonu
+- **Hedef Framework:** .NET Framework 4.7.2
 
 ## Proje Yapısı
 
 ```
-mini-muhasebe-app/
-├── MiniMuhasebe.UI/              # Windows Forms UI
-│   ├── Forms/
-│   │   ├── LoginForm.cs
-│   │   ├── MainDashboardForm.cs
-│   │   ├── IncomeExpenseForm.cs
-│   │   ├── CurrentAccountForm.cs
-│   │   ├── BankAccountsForm.cs
-│   │   ├── BankTransactionsForm.cs
-│   │   ├── MatchingForm.cs
-│   │   ├── ReportsForm.cs
-│   │   └── SettingsForm.cs
-│   ├── Program.cs
-│   └── MiniMuhaseba.UI.csproj
+MiniMuhasebe.sln
+├── MiniMuhasebe.Models/          # Veri modelleri
+│   └── Models.cs                 # Tüm entity sınıfları
 │
-├── MiniMuhasebe.Business/        # Business Logic
-│   ├── Services/
-│   │   ├── UserService.cs
-│   │   ├── CompanyService.cs
-│   │   ├── IncomeExpenseService.cs
-│   │   ├── CurrentAccountService.cs
-│   │   ├── BankService.cs
-│   │   └── ReportService.cs
-│   ├── Interfaces/
-│   │   └── I[Service].cs
-│   └── MiniMuhasebe.Business.csproj
+├── MiniMuhasebe.Data/            # Veri erişim katmanı
+│   ├── BaseRepository.cs         # Temel repository
+│   ├── DatabaseInitializer.cs    # DB başlatma ve seed
+│   ├── Logger.cs                 # Loglama
+│   ├── SecurityHelper.cs         # Şifreleme (PBKDF2 + AES)
+│   └── Repositories/
+│       ├── UserRepository.cs
+│       ├── CompanyRepository.cs
+│       ├── FiscalPeriodRepository.cs
+│       ├── AccountRepository.cs
+│       ├── BankAccountRepository.cs
+│       ├── BankTransactionRepository.cs
+│       ├── CurrentAccountRepository.cs
+│       ├── CurrentAccountTransactionRepository.cs
+│       ├── IncomeExpenseTransactionRepository.cs
+│       ├── MatchingRepository.cs
+│       ├── AuditLogRepository.cs
+│       └── AppSettingsRepository.cs
 │
-├── MiniMuhasebe.Data/            # Data Access Layer
-│   ├── Repositories/
-│   │   ├── UserRepository.cs
-│   │   ├── CompanyRepository.cs
-│   │   ├── IncomeExpenseRepository.cs
-│   │   ├── CurrentAccountRepository.cs
-│   │   ├── BankRepository.cs
-│   │   └── AuditLogRepository.cs
-│   ├── Database/
-│   │   ├── DbContext.cs
-│   │   └── DatabaseInitializer.cs
-│   └── MiniMuhasebe.Data.csproj
-│
-├── MiniMuhasebe.Integration/     # External API Integration
-│   ├── BankingAPIs/
-│   │   └── BankApiClient.cs
+├── MiniMuhasebe.Integration/     # Dış API entegrasyonu
 │   ├── Interfaces/
 │   │   └── IBankApiProvider.cs
-│   └── MiniMuhasebe.Integration.csproj
+│   └── BankingAPIs/
+│       ├── BankApiClient.cs
+│       └── MockBankApiProvider.cs
 │
-├── MiniMuhasebe.Models/          # Data Models
-│   ├── User.cs
-│   ├── Company.cs
-│   ├── FiscalPeriod.cs
-│   ├── IncomeExpenseTransaction.cs
-│   ├── CurrentAccount.cs
-│   ├── BankAccount.cs
-│   ├── BankTransaction.cs
-│   ├── TransactionMatch.cs
-│   ├── AuditLog.cs
-│   └── MiniMuhasebe.Models.csproj
+├── MiniMuhasebe.Business/        # İş mantığı katmanı
+│   └── Services/
+│       ├── UserService.cs
+│       ├── CompanyService.cs
+│       ├── FiscalPeriodService.cs
+│       ├── AccountService.cs
+│       ├── IncomeExpenseService.cs
+│       ├── CurrentAccountService.cs
+│       ├── CurrentAccountTransactionService.cs
+│       ├── BankService.cs
+│       ├── MatchingService.cs
+│       ├── BackupService.cs
+│       ├── AuditLogService.cs
+│       └── ReportService.cs
 │
-├── Database/
-│   ├── schema.sql              # Veritabanı şeması
-│   └── seed-data.sql           # Örnek veri
+├── MiniMuhasebe.UI/              # Windows Forms UI
+│   ├── Program.cs
+│   ├── AppSession.cs             # Oturum yönetimi
+│   └── Forms/
+│       ├── LoginForm.cs
+│       ├── MainDashboardForm.cs
+│       ├── IncomeExpenseForm.cs
+│       ├── CurrentAccountForm.cs
+│       ├── BankAccountsForm.cs
+│       ├── BankTransactionsForm.cs
+│       ├── MatchingForm.cs
+│       ├── ReportsForm.cs
+│       └── SettingsForm.cs
 │
-├── Docs/
-│   ├── INSTALLATION.md         # Kurulum talimatı
-│   ├── USER_GUIDE.md           # Kullanıcı kılavuzu
-│   └── API_INTEGRATION.md      # API entegrasyonu
-│
-└── .gitignore
+└── Database/
+    ├── schema.sql                # Veritabanı şeması
+    ├── seed-data.sql             # Örnek veriler
+    └── seed-data-clean.sql       # Minimal başlangıç verisi
 ```
 
 ## Kurulum
 
-Detaylı kurulum talimatları için bkz: [INSTALLATION.md](Docs/INSTALLATION.md)
+### Gereksinimler
+- Windows 10/11
+- .NET Framework 4.7.2 veya üzeri
+- Visual Studio 2019/2022
 
-### Hızlı Başlangıç
+### Adımlar
 
-1. Repository'i clone edin
-2. Visual Studio'da `MiniMuhasebe.sln` açın
-3. NuGet paketlerini geri yükleyin
-4. `Database/schema.sql` ile SQLite veritabanını oluşturun
-5. Uygulamayı çalıştırın
+1. Projeyi klonlayın veya indirin
+2. `MiniMuhasebe.sln` dosyasını Visual Studio ile açın
+3. NuGet paketlerini geri yükleyin:
+   ```
+   Tools → NuGet Package Manager → Restore NuGet Packages
+   ```
+4. Projeyi derleyin (Build → Build Solution veya `Ctrl+Shift+B`)
+5. `MiniMuhasebe.UI` projesini başlangıç projesi olarak ayarlayın
+6. Uygulamayı çalıştırın (`F5`)
 
-## Kullanıcı Bilgileri (İlk Kurulum)
+### İlk Giriş
 
-- **Kullanıcı Adı:** admin
-- **Şifre:** Admin123!
+- **Kullanıcı Adı:** `admin`
+- **Şifre:** `Admin123!`
 
-⚠️ İlk giriş sonrası şifreyi değiştirmeniz önerilir.
+Veritabanı ilk çalıştırmada otomatik olarak oluşturulur.
+Konum: `%AppData%\MiniMuhasebe\MiniMuhasebe.db`
 
-## Veritabanı Tabloları
+## Özellikler
 
-- **Users** - Kullanıcı hesapları
-- **Roles** - Roller (Yönetici, Standart Kullanıcı)
-- **Companies** - Firma bilgileri
-- **FiscalPeriods** - Mali dönemler
-- **Accounts** - Hesap kategorileri
-- **CurrentAccounts** - Cari kartlar (müşteri/tedarikçi)
-- **CashTransactions** - Kasa hareketleri
-- **BankAccounts** - Banka hesapları
-- **BankTransactions** - Banka hareketleri (API'den)
-- **IncomeExpenseTransactions** - Gelir-gider işlemleri
-- **MatchingRules** - Otomatik eşleştirme kuralları
-- **TransactionMatches** - İşlem eşleştirmeleri
-- **AuditLogs** - Denetim günlüğü
-- **AppSettings** - Uygulama ayarları
+### ✅ Kullanıcı ve Yetki Yönetimi
+- Giriş ekranı (kullanıcı adı/şifre)
+- İki rol sistemi (Yönetici, Standart Kullanıcı)
+- PBKDF2 + SHA256 ile güvenli şifre saklama
+- AES-256 ile API anahtarı şifreleme
+- Audit log (oturum açma/kapama, CRUD işlemleri)
 
-## Güvenlik Notları
+### ✅ Firma ve Dönem Yönetimi
+- Birden fazla firma kaydı
+- Mali dönem tanımlaması (aylık/yıllık)
+- Aktif firma/dönem seçimi
+- Yıllık 12 aylık dönem otomatik oluşturma
 
-✅ Parametreli SQL sorguları kullanılır (SQL Injection koruması)
-✅ Şifreler hash + salt ile saklanır
-✅ API anahtarları şifreli saklanır
-✅ Tüm işlemler audit log'a kaydedilir
-✅ Hassas veriler loglara yazılmaz
+### ✅ Gelir-Gider Takibi
+- Manuel fiş/kayıt girişi (CRUD)
+- Tarih, belge no, açıklama, tutar, KDV
+- Ödeme tipi seçimi (nakit/banka/cari)
+- CSV dışa aktarım
+
+### ✅ Cari Hesap Yönetimi
+- Müşteri ve tedarikçi kartı
+- Cari hareket takibi (borç/alacak)
+- Bakiye ve ekstre görüntüleme
+
+### ✅ Banka Hesapları
+- Birden fazla banka hesabı
+- API entegrasyonu (REST, SOAP, OpenBanking)
+- Mock API ile test modu
+- Otomatik hareket çekme
+- Mükerrer kayıt engelleme (External ID)
+
+### ✅ Eşleştirme Sistemi
+- Banka hareketlerini muhasebe kayıtlarıyla eşleştirme
+- Otomatik eşleme (tutar, tarih, açıklama bazlı skorlama)
+- Manuel eşleştirme
+- Eşleştirme kuralları yönetimi
+
+### ✅ Raporlama
+- Gelir-Gider Özeti
+- Nakit Akış Raporu
+- Banka Hareket Raporu
+- Cari Ekstre Raporu
+- Dönem Özeti
+- Eşleştirme Raporu
+- CSV dışa aktarım
+
+### ✅ Yedekleme
+- Tek tık yedek alma (SQLite Online Backup API)
+- Yedek listesi görüntüleme
+- Geri yükleme fonksiyonu
+- Otomatik eski yedek temizleme
+
+## Güvenlik
+
+- Şifreler PBKDF2 + SHA256 + 10.000 iterasyon ile hash'lenir
+- API anahtarları AES-256-CBC ile şifrelenir
+- Tüm SQL sorguları parametreli (SQL injection koruması)
+- Audit log ile tüm işlemler izlenir
+
+## Geliştirici Notları
+
+- Banka API entegrasyonu için `MockBankApiProvider` test amaçlıdır
+- Gerçek banka API'si için `RestBankApiProvider` sınıfını genişletin
+- `IBankApiProvider` arayüzünü implement ederek yeni sağlayıcı ekleyebilirsiniz
+- Veritabanı yolu: `%AppData%\MiniMuhasebe\MiniMuhasebe.db`
+- Log dosyaları: `Logs\MiniMuhasebe.log`
+- Yedekler: `Backups\` klasörü
 
 ## Lisans
 
-MIT License - Ayrıntılar için [LICENSE](LICENSE) dosyasına bakın.
-
-## İletişim
-
-Sorularınız ve önerileriniz için issue açabilirsiniz.
+Bu proje eğitim amaçlı geliştirilmiştir.
+Özkan Ferhat - 2026

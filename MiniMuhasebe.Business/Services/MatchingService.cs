@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MiniMuhasebe.Data;
 using MiniMuhasebe.Data.Repositories;
+using MiniMuhasebe.Business.Interfaces;
 using MiniMuhasebe.Models;
 
 namespace MiniMuhasebe.Business.Services
@@ -10,7 +11,7 @@ namespace MiniMuhasebe.Business.Services
     /// <summary>
     /// Banka hareketi - muhasebe kaydı eşleştirme servisi
     /// </summary>
-    public class MatchingService
+    public class MatchingService : IMatchingService
     {
         private readonly TransactionMatchRepository _matchRepository;
         private readonly BankTransactionRepository _bankTransactionRepository;
@@ -85,8 +86,7 @@ namespace MiniMuhasebe.Business.Services
         /// <summary>
         /// Otomatik eşleştirme çalıştır
         /// </summary>
-        public List<TransactionMatch> RunAutoMatching(int companyId, int bankAccountId,
-            decimal amountTolerance = DefaultAmountTolerance, int dateToleranceDays = DefaultDateToleranceDays)
+        public List<TransactionMatch> RunAutoMatching(int companyId, int bankAccountId)
         {
             var createdMatches = new List<TransactionMatch>();
 
@@ -111,7 +111,7 @@ namespace MiniMuhasebe.Business.Services
 
                     foreach (var ieTx in unmatchedIE)
                     {
-                        decimal score = CalculateMatchScore(bankTx, ieTx, amountTolerance, dateToleranceDays);
+                        decimal score = CalculateMatchScore(bankTx, ieTx, DefaultAmountTolerance, DefaultDateToleranceDays);
                         if (score > bestScore && score >= 70) // Minimum %70 eşleşme skoru
                         {
                             bestScore = score;

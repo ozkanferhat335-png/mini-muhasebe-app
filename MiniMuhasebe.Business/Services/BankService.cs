@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using MiniMuhasebe.Data;
 using MiniMuhasebe.Data.Repositories;
+using MiniMuhasebe.Business.Interfaces;
 using MiniMuhasebe.Models;
 
 namespace MiniMuhasebe.Business.Services
@@ -9,7 +10,7 @@ namespace MiniMuhasebe.Business.Services
     /// <summary>
     /// Banka işlemleri servisi
     /// </summary>
-    public class BankService
+    public class BankService : IBankService
     {
         private readonly BankAccountRepository _bankAccountRepository;
         private readonly BankTransactionRepository _bankTransactionRepository;

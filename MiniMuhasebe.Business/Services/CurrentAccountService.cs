@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using MiniMuhasebe.Data;
 using MiniMuhasebe.Data.Repositories;
+using MiniMuhasebe.Business.Interfaces;
 using MiniMuhasebe.Models;
 
 namespace MiniMuhasebe.Business.Services
@@ -9,7 +10,7 @@ namespace MiniMuhasebe.Business.Services
     /// <summary>
     /// Cari hesap işlemleri servisi
     /// </summary>
-    public class CurrentAccountService
+    public class CurrentAccountService : ICurrentAccountService
     {
         private readonly CurrentAccountRepository _currentAccountRepository;
         private readonly Logger _logger;

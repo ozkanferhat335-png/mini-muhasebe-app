@@ -8,7 +8,6 @@
     <LangVersion>7.3</LangVersion>
     <UseWindowsForms>true</UseWindowsForms>
     <Nullable>disable</Nullable>
-    <ApplicationIcon>app.ico</ApplicationIcon>
     <StartupObject>MiniMuhasebe.UI.Program</StartupObject>
   </PropertyGroup>
 

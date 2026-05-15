@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using MiniMuhasebe.Data;
 using MiniMuhasebe.Data.Repositories;
+using MiniMuhasebe.Business.Interfaces;
 using MiniMuhasebe.Models;
 
 namespace MiniMuhasebe.Business.Services
@@ -9,7 +10,7 @@ namespace MiniMuhasebe.Business.Services
     /// <summary>
     /// Gelir-Gider işlemleri servisi
     /// </summary>
-    public class IncomeExpenseService
+    public class IncomeExpenseService : IIncomeExpenseService
     {
         private readonly IncomeExpenseTransactionRepository _transactionRepository;
         private readonly Logger _logger;

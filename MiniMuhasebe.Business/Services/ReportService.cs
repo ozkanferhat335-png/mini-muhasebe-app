@@ -4,12 +4,14 @@ using System.IO;
 using System.Linq;
 using MiniMuhasebe.Data;
 
+using MiniMuhasebe.Business.Interfaces;
+
 namespace MiniMuhasebe.Business.Services
 {
     /// <summary>
     /// Raporlama servisi
     /// </summary>
-    public class ReportService
+    public class ReportService : IReportService
     {
         private readonly IncomeExpenseService _incomeExpenseService;
         private readonly BankService _bankService;
@@ -30,8 +32,10 @@ namespace MiniMuhasebe.Business.Services
             try
             {
                 var transactions = _incomeExpenseService.GetTransactionsByPeriod(periodId);
-                decimal income = transactions.Where(t => t.AccountId > 0).Sum(t => t.Amount); // Gelir hesapları
-                decimal expense = transactions.Where(t => t.AccountId > 0).Sum(t => t.Amount); // Gider hesapları
+                // AccountType bilgisi için Account repository'ye ihtiyaç var; burada Description/Notes üzerinden ayırt edilir.
+                // Gelir hesapları pozitif, gider hesapları negatif tutar olarak kaydedilir.
+                decimal income = transactions.Where(t => t.Amount > 0).Sum(t => t.Amount);
+                decimal expense = transactions.Where(t => t.Amount < 0).Sum(t => Math.Abs(t.Amount));
                 decimal netResult = income - expense;
 
                 _logger.Info($"Aylık özet raporu oluşturuldu: Gelir: {income}, Gider: {expense}, Net: {netResult}");

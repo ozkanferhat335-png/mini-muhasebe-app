@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net472</TargetFramework>
+    <AssemblyName>MiniMuhasebe.Integration</AssemblyName>
+    <RootNamespace>MiniMuhasebe.Integration</RootNamespace>
+    <LangVersion>7.3</LangVersion>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MiniMuhasebe.Models\MiniMuhasebe.Models.csproj" />
+    <ProjectReference Include="..\MiniMuhasebe.Data\MiniMuhasebe.Data.csproj" />
+  </ItemGroup>
+
+</Project>
